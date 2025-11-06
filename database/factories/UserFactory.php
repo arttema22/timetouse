@@ -44,7 +44,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
@@ -54,19 +54,49 @@ class UserFactory extends Factory
      */
     public function withPersonalTeam(?callable $callback = null): static
     {
-        if (! Features::hasTeamFeatures()) {
+        if (!Features::hasTeamFeatures()) {
             return $this->state([]);
         }
 
         return $this->has(
             Team::factory()
-                ->state(fn (array $attributes, User $user) => [
-                    'name' => $user->name.'\'s Team',
+                ->state(fn(array $attributes, User $user) => [
+                    'name' => $user->name . '\'s Team',
                     'user_id' => $user->id,
                     'personal_team' => true,
                 ])
                 ->when(is_callable($callback), $callback),
             'ownedTeams'
         );
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function ($user) {
+            // Если у пользователя нет current_team_id и он owner — создаём команду
+            if ($user->role === 'owner' && !$user->current_team_id) {
+                $team = Team::create([
+                    'user_id' => $user->id,
+                    'name' => Str::of($user->name)->append(' Транспорт')->limit(40),
+                    'personal_team' => true,
+                ]);
+
+                $user->current_team_id = $team->id;
+                $user->save();
+
+                // Добавляем владельца в свою команду (Jetstream делает это автоматически,
+                // но явно не помешает)
+                $team->users()->attach($user->id);
+            }
+        });
+    }
+    public function client()
+    {
+        return $this->state(['role' => 'client']);
+    }
+
+    public function owner()
+    {
+        return $this->state(['role' => 'owner']);
     }
 }
