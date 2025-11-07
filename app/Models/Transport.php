@@ -31,6 +31,11 @@ class Transport extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    public function typeModel()
+    {
+        return $this->belongsTo(TransportType::class, 'type', 'slug');
+    }
+
     public function responses()
     {
         return $this->hasMany(Response::class);

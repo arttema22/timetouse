@@ -30,6 +30,9 @@ use MoonShine\UI\Components\{Breadcrumbs,
     Layout\TopBar,
     Layout\Wrapper,
     When};
+use App\MoonShine\Resources\TransportTypeResource;
+use MoonShine\MenuManager\MenuItem;
+use App\MoonShine\Resources\TransportResource;
 
 final class MoonShineLayout extends AppLayout
 {
@@ -44,6 +47,8 @@ final class MoonShineLayout extends AppLayout
     {
         return [
             ...parent::menu(),
+            MenuItem::make('TransportTypes', TransportTypeResource::class),
+            MenuItem::make('Transports', TransportResource::class),
         ];
     }
 

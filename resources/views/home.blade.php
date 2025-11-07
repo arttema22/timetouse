@@ -1574,11 +1574,9 @@
                         <select name="type" id="type"
                             class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
                             <option value="">Все типы</option>
-                            <option value="boat">Катер</option>
-                            <option value="yacht">Яхта</option>
-                            <option value="atv">Квадроцикл</option>
-                            <option value="snowmobile">Снегоход</option>
-                            <option value="scooter">Мопед</option>
+                            @foreach($transportTypes as $type)
+                            <option value="{{ $type->slug }}">{{ $type->name }}</option>
+                            @endforeach
                         </select>
                     </div>
 

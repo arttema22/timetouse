@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
-            $table->enum('type', ['boat', 'yacht', 'atv', 'snowmobile', 'scooter']);
+            $table->foreignId('type_id')->constrained('transport_types')->onDelete('cascade');
             $table->text('description')->nullable();
             $table->decimal('price_per_hour', 10, 2)->nullable();
             $table->decimal('price_per_day', 10, 2)->nullable();
